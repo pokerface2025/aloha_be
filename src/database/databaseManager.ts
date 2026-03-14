@@ -3,9 +3,9 @@ import { Env } from "../envSetup.js";
 import { DatabaseList } from "./databaseList.js";
 import { CollectionList } from "./collections.js";
 
-export function getMongoClient(dbName?: DatabaseList) {
+export function getMongoClient(collection:CollectionList,dbName?: DatabaseList) {
     const DbName = dbName ?? Env.MONGODB;
-    return DatabaseManager.mongoClient.db(DbName);
+    return DatabaseManager.mongoClient.db(DbName).collection(collection);
 }
 
 export function getCollection(collectionName: CollectionList, dbName?: DatabaseList) {

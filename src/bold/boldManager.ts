@@ -1,3 +1,6 @@
+import { CollectionList } from "../database/collections.js";
+import { getMongoClient } from "../database/databaseManager.js";
+import { BoldInvoiceStruct } from "./boldPaymentInvoiceStruct.js";
 import { BoldPaymentStruct } from "./boldPaymentStruct.js";
 
 export class boldManager {
@@ -74,10 +77,17 @@ export class boldManager {
 
     static async handleWebhook(data: any) {
 
+        const boldInvoice = new BoldInvoiceStruct(data);
 
+        const found = await getMongoClient("transactions").findOne({ "id": boldInvoice.id });
+
+        if (found) {
+            console.log("Invoice already exists in database, skipping insertion.");
+            return;
+        }
+
+        await getMongoClient("transactions").insertOne(boldInvoice);
         
-
-            
     }
 
 }

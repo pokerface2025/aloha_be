@@ -36,7 +36,7 @@ export class OrdersManager {
         order.paymentReferenceId = payload.payment_link;
         order.status = "ACTIVE"
 
-        await getMongoClient().collection(CollectionList.Orders).insertOne(order);
+        await getMongoClient("orders").insertOne(order);
 
         console.log("Bold Link: ");
         return { link: payload.url };
@@ -46,11 +46,29 @@ export class OrdersManager {
 
     }
 
-    static getOrdersList(query: any) {
+    static async getOrdersList(query: any) {
+
+        if (query._id){
+            query._id = new ObjectId(query._id);
+        }
+
+        const result = await getMongoClient("orders").find(query).toArray();
+
+        return result;
 
     }
 
-    static updateOrder(data: any) {
+    static async updateOrder(data: any) {
 
+        if (data._id){
+            data._id = new ObjectId(data._id);
+        }
+
+        const result = await getMongoClient("orders").updateOne(
+            { _id: data._id },
+            { $set: data }
+        );
+
+        return result;
     }
 }
