@@ -56,7 +56,7 @@ export class boldManager {
 
         if (!response.ok) {
             const resError = await response.text();
-
+            console.log("Error response from Bold API:", resError);
             throw new Error(`Failed to create payment link: ${response.statusText} , Response: ${resError}`);
         }
 
@@ -69,12 +69,14 @@ export class boldManager {
             console.log("Response text:", responseData);
         }
 
-        return {
-            link: responseData.payload.url
-        };
+        return responseData;
     }
 
     static async handleWebhook(data: any) {
+
+
+        
+
             
     }
 

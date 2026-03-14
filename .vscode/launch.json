@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "vercel dev",
+            "command": "vercel dev --listen 4000 ",
             "name": "Run Vercel Dev",
             "request": "launch",
             "type": "node-terminal"

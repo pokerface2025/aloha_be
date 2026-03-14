@@ -29,7 +29,19 @@ export class BoldPaymentStruct {
             "NEQUI"
         ];
         this.payer_email = data?.payer_email;
-        this.image_url = data?.image_url||"";
-        this.callback_url = data?.callback_url||"";
+        this.image_url = data?.image_url || "";
+        this.callback_url = data?.callback_url || "";
     }
 }
+
+
+export const BoldPaymentStatus = {
+    ACTIVE: "El link está disponible para ser pagado. Esto puede suceder porque no se ha iniciado un pago o porque un pago anterior falló y el link está listo para ser usado nuevamente.",
+    PROCESSING: "El pago está en curso y aún no se ha completado la transacción.",
+    PAID: "El pago se ha realizado con éxito.",
+    REJECTED: "El pago fue rechazado.",
+    CANCELLED: "El pago fue cancelado por el usuario o fue fallido.",
+    EXPIRED: "El link está vencido y no puede ser pagado."
+};
+
+export type BoldPaymentStatusType = keyof typeof BoldPaymentStatus;

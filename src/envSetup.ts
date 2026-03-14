@@ -74,7 +74,6 @@ export function environmentSetup() {
         console.log("Running in development mode.");
         RunningServerAt = runAs.dev;
         Env.PORT = Env.DEVPORT;
-        Env.MONGODB = "TEST"
 
     } else {
         console.log("Running in production mode.");

@@ -5,8 +5,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { Env, environmentSetup, logType } from './envSetup.js';
 import expressRoutes from './express/expressRoutes.js';
-import { error } from 'console';
-import { Code } from 'mongodb';
 import { DatabaseManager } from './database/databaseManager.js';
 
 environmentSetup()
