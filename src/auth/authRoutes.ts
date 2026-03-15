@@ -19,9 +19,10 @@ authRoutes.post(`${prfix}/login`, async (req, res) => {
 
 
 //can register with cryptopass, using header seed with cryptopass value
-authRoutes.post(`${prfix}/user/register`, SecurityManager.SecurityMiddleware([RoleList.Admin]), async (req, res) => {
+authRoutes.post(`${prfix}/user/register`, SecurityManager.SecurityMiddleware([RoleList.Admin]), async (req: any, res) => {
     const body = req.body;
-    const authRegister: UserStruct = await AuthManager.register(body)
+    const payload = req["payload"];
+    const authRegister: UserStruct = await AuthManager.register(body, payload)
 
     //save to db
     const result = await UserManager.registerUser(authRegister);

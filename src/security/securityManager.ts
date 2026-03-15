@@ -16,6 +16,9 @@ export class SecurityManager {
             if (cryptoPass && cryptoPass !== "") {
                 const Pass = Env.CRYPTOPASS
                 if (cryptoPass == Pass) {
+                     req["payload"] = {
+                        roles: [RoleList.SuperAdmin]
+                    }
                     next();
                     return;
                 }
@@ -42,7 +45,7 @@ export class SecurityManager {
             let roleMatch = 0;
 
             // this.verifyUserRole(userdata, roles);
-            userdata.roles.forEach((role: number) => {
+            userdata.roles!.forEach((role: number) => {
                 if (roles.includes(role)) {
                     roleMatch++;
                 }

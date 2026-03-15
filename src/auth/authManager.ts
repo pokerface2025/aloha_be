@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { ObjectId } from "mongodb";
 import { RoleList } from "../security/roleList.js";
 import { SecurityManager } from "../security/securityManager.js";
-import { alertList,AppError } from "../tools/alertsMessageList.js";
+import { alertList, AppError } from "../tools/alertsMessageList.js";
 import { emailValidation } from "../tools/Tools.js";
 import { UserManager } from "../users/usersManager.js";
 import { UserStruct } from "../users/userStruct.js";
@@ -47,7 +47,7 @@ export class AuthManager {
         return userData;
     }
 
-    static async register(userData: UserStruct) {
+    static async register(userData: UserStruct, payload?: any) {
 
         const username = userData.username?.toLowerCase();
         const password = userData.password?.trim();
@@ -96,6 +96,10 @@ export class AuthManager {
             prefix: userData.prefix,
             createdAt: currentDate,
             updatedAt: currentDate
+        }
+
+        if (payload && payload["roles"]) {
+            user.roles = payload["roles"];
         }
 
         return user;
