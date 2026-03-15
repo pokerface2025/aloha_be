@@ -1,7 +1,9 @@
+import { ObjectId } from "mongodb";
 import { CollectionList } from "../database/collections.js";
 import { getMongoClient } from "../database/databaseManager.js";
 import { BoldInvoiceStruct } from "./boldPaymentInvoiceStruct.js";
 import { BoldPaymentStruct } from "./boldPaymentStruct.js";
+import { OrdersStruct } from "../orders/ordersStruct.js";
 
 export class boldManager {
 
@@ -82,12 +84,37 @@ export class boldManager {
         const found = await getMongoClient("transactions").findOne({ "id": boldInvoice.id });
 
         if (found) {
-            console.log("Invoice already exists in database, skipping insertion.");
-            return;
+            console.log("🔷 Invoice already exists in database, skipping insertion.");
+            return true;
         }
 
         await getMongoClient("transactions").insertOne(boldInvoice);
-        
+
+        const orderData = await getMongoClient("orders").findOne({ _id: new ObjectId(boldInvoice.data?.metadata.reference) }) as OrdersStruct;
+        switch (boldInvoice.type) {
+            case "SALE_APPROVED":
+            case "VOID_APPROVED":
+                orderData.status = "APPROVED";
+                await getMongoClient("orders").updateOne(
+                    { _id: orderData._id },
+                    { $set: { status: orderData.status } }
+                );
+                break;
+            case "SALE_REJECTED":
+            case "VOID_REJECTED":
+                orderData.status = "REJECTED";
+                await getMongoClient("orders").updateOne(
+                    { _id: orderData._id },
+                    { $set: { status: orderData.status } }
+                );
+                // No action needed for VOID_REJECTED in this implementation
+                break;
+            default:
+                console.log(`Unhandled notification type: ${boldInvoice.type}`);
+        }
+
+        return true;
+
     }
 
 }

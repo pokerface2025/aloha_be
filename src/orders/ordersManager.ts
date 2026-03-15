@@ -25,6 +25,7 @@ export class OrdersManager {
             amount: {
                 total_amount: totalAmount
             },
+            reference: order._id.toString(),
             description: `${order.firstName} ${order.lastName} Orden: #${order._id.toString()}`,
             payer_email: order.email,
             callback_url: order.callbackUrl,
