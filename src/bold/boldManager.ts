@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
-import { CollectionList } from "../database/collections.js";
-import { getMongoClient } from "../database/databaseManager.js";
+import { getCollection } from "../database/databaseManager.js";
 import { BoldInvoiceStruct } from "./boldPaymentInvoiceStruct.js";
 import { BoldPaymentStruct } from "./boldPaymentStruct.js";
 import { OrdersStruct } from "../orders/ordersStruct.js";
@@ -81,21 +80,21 @@ export class boldManager {
 
         const boldInvoice = new BoldInvoiceStruct(data);
 
-        const found = await getMongoClient("transactions").findOne({ "id": boldInvoice.id });
+        const found = await getCollection("transactions").findOne({ "id": boldInvoice.id });
 
         if (found) {
             console.log("🔷 Invoice already exists in database, skipping insertion.");
             return true;
         }
 
-        await getMongoClient("transactions").insertOne(boldInvoice);
+        await getCollection("transactions").insertOne(boldInvoice);
 
-        const orderData = await getMongoClient("orders").findOne({ _id: new ObjectId(boldInvoice.data?.metadata.reference) }) as OrdersStruct;
+        const orderData = await getCollection("orders").findOne({ _id: new ObjectId(boldInvoice.data?.metadata.reference) }) as OrdersStruct;
         switch (boldInvoice.type) {
             case "SALE_APPROVED":
             case "VOID_APPROVED":
                 orderData.status = "APPROVED";
-                await getMongoClient("orders").updateOne(
+                await getCollection("orders").updateOne(
                     { _id: orderData._id },
                     { $set: { status: orderData.status } }
                 );
@@ -103,7 +102,7 @@ export class boldManager {
             case "SALE_REJECTED":
             case "VOID_REJECTED":
                 orderData.status = "REJECTED";
-                await getMongoClient("orders").updateOne(
+                await getCollection("orders").updateOne(
                     { _id: orderData._id },
                     { $set: { status: orderData.status } }
                 );

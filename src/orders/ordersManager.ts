@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { OrdersStruct } from "./ordersStruct.js";
 import { BoldPaymentStruct } from "../bold/boldPaymentStruct.js";
 import { boldManager } from "../bold/boldManager.js";
-import { getMongoClient } from "../database/databaseManager.js";
+import { getCollection, getMongoClient } from "../database/databaseManager.js";
 import { CollectionList } from "../database/collections.js";
 
 export class OrdersManager {
@@ -23,7 +23,7 @@ export class OrdersManager {
         const boldPayment: BoldPaymentStruct = {
             amount_type: "CLOSE",
             amount: {
-                total_amount: totalAmount
+                total_amount: totalAmount + (order.shippingCost || 0)
             },
             reference: order._id.toString(),
             description: `${order.firstName} ${order.lastName} Orden: #${order._id.toString()}`,
@@ -37,7 +37,7 @@ export class OrdersManager {
         order.paymentReferenceId = payload.payment_link;
         order.status = "ACTIVE"
 
-        await getMongoClient("orders").insertOne(order);
+        await getCollection("orders").insertOne(order);
 
         console.log("Bold Link: ");
         return { link: payload.url };
@@ -53,7 +53,7 @@ export class OrdersManager {
             query._id = new ObjectId(query._id);
         }
 
-        const result = await getMongoClient("orders").find(query).toArray();
+        const result = await getCollection("orders").find(query).toArray();
 
         return result;
 
@@ -65,7 +65,7 @@ export class OrdersManager {
             data._id = new ObjectId(data._id);
         }
 
-        const result = await getMongoClient("orders").updateOne(
+        const result = await getCollection("orders").updateOne(
             { _id: data._id },
             { $set: data }
         );

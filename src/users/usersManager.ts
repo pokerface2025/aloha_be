@@ -1,6 +1,5 @@
 import { ObjectId, type Filter } from "mongodb";
-import { CollectionList } from "../database/collections.js";
-import { getCollection, getMongoClient } from "../database/databaseManager.js";
+import { getCollection } from "../database/databaseManager.js";
 import { alertList, AppError } from "../tools/alertsMessageList.js";
 import { UserStruct } from "./userStruct.js";
 
@@ -24,14 +23,14 @@ export class UserManager {
 
         const passfilter = filter ? { projection: { password: 0 } } : {};
 
-        const users = await getMongoClient("users")
+        const users = await getCollection("users")
             .find(Query, passfilter)
             .sort({ createdAt: -1 })
             .toArray();
         return users;
     }
     public static async registerUser(userData: UserStruct) {
-        const user = await getMongoClient("users").insertOne(userData).catch((err) => {
+        const user = await getCollection("users").insertOne(userData).catch((err) => {
             throw new Error("Error registering user: " + err);
         });
         return user;
@@ -49,7 +48,7 @@ export class UserManager {
         data.updatedAt = new Date();
 
         // call to db to update user
-        const result = await getMongoClient("users").updateOne({ _id: userId }, { $set: data }).catch((err: any) => {
+        const result = await getCollection("users").updateOne({ _id: userId }, { $set: data }).catch((err: any) => {
             // throw new AppError("Error updating user: " + err);
             throw new AppError("Error updating user" + err);
         });
@@ -58,7 +57,7 @@ export class UserManager {
     static async deleteUser(userId: string) {
         const id = new ObjectId(userId);
         // Check if user exists on db 
-        const result = await getMongoClient("users").deleteOne({ _id: id }).catch((err: any) => {
+        const result = await getCollection("users").deleteOne({ _id: id }).catch((err: any) => {
             throw new AppError("Error deleting user: " + err);
         });
 

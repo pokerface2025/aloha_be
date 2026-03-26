@@ -8,7 +8,7 @@ import expressRoutes from './express/expressRoutes.js';
 import { DatabaseManager } from './database/databaseManager.js';
 
 environmentSetup()
-await DatabaseManager.init(Env.MONGOURI,Env.MONGODB)
+await DatabaseManager.init(Env.MONGOURI, Env.MONGODB)
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -16,17 +16,19 @@ const __dirname = path.dirname(__filename)
 const expressRoot = express()
 
 //Middleware 
-expressRoot.use(cors({
-  origin: "*", // Allow all origins
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
-  allowedHeaders: "Content-Type, Authorization", // Allow specific headers
-  preflightContinue: false, // Do not pass the preflight request to the next handler
-  optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
-}));
 
 expressRoot.use(express.json({ limit: '50mb' })); // Increase the limit to 50mb for large JSON payloads
 expressRoot.use(express.urlencoded({ extended: true }));
 expressRoot.use(morgan("dev"));
+
+expressRoot.use(cors({
+    origin: "*", // Allow all origins
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
+    allowedHeaders: "*", // Allow specific headers
+    preflightContinue: false, // Do not pass the preflight request to the next handler
+    optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
+  }));
+
 expressRoot.use((req, res, next) => {
   const reqData = {
     path: req.path,
@@ -37,6 +39,7 @@ expressRoot.use((req, res, next) => {
     status: res.statusCode,
     ip: req.ip
   }
+  
 
   if (logType["express"]) {
     console.log("🔷", reqData);
@@ -90,7 +93,7 @@ expressRoot.get('/healthz', (req, res) => {
 })
 
 expressRoot.use((err: any, req: any, res: any, next: any) => {
-    res.status(500).json({...err,message: err.message});
+  res.status(500).json({ ...err, message: err.message });
 
 })
 export default expressRoot

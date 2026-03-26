@@ -3,9 +3,9 @@ import { Env } from "../envSetup.js";
 import { DatabaseList } from "./databaseList.js";
 import { CollectionList } from "./collections.js";
 
-export function getMongoClient(collection:CollectionList,dbName?: DatabaseList) {
+export function getMongoClient(dbName?: DatabaseList) {
     const DbName = dbName ?? Env.MONGODB;
-    return DatabaseManager.mongoClient.db(DbName).collection(collection);
+    return DatabaseManager.mongoClient.db(DbName);
 }
 
 export function getCollection(collectionName: CollectionList, dbName?: DatabaseList) {
@@ -21,10 +21,16 @@ export function getCollection(collectionName: CollectionList, dbName?: DatabaseL
         }) as unknown as mongodb.MongoClient;
         console.log("connected with mongoDB");
     }
+    let dbnameWork = dbName ?? Env.MONGODB;
 
-    const db = client.db(dbName ?? Env.MONGODB);
+    if (Env.RUNAS == "dev") {
+        dbnameWork = dbnameWork + "-dev";
+    }
+
+    const db = client.db(dbnameWork ?? Env.MONGODB);
     return db.collection(collectionName);
 }
+
 
 export class DatabaseManager {
 
