@@ -51,6 +51,12 @@ export class alertList {
         name: "EmailIsInvalidError"
     };
 
+    public static readonly userOrPasswordError: AppError = {
+        message: "El usuario o la contraseña son incorrectos",
+        statusCode: 401,
+        name: "UserOrPasswordError"
+    }
+
     public static readonly userNotFound: AppError = {
         message: "Usuario no encontrado",
         statusCode: 404,
