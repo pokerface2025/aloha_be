@@ -53,7 +53,7 @@ export class OrdersManager {
             query._id = new ObjectId(query._id);
         }
 
-        const result = await getCollection("orders").find(query).toArray();
+        const result = await getCollection("orders").find(query).sort({ createdAt: -1 }).toArray();
 
         return result;
 
