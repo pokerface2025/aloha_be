@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { Env, environmentSetup, logType } from './envSetup.js';
 import expressRoutes from './express/expressRoutes.js';
 import { DatabaseManager } from './database/databaseManager.js';
+import { AppVersion } from './version.js';
 
 environmentSetup()
 await DatabaseManager.init(Env.MONGOURI, Env.MONGODB)
@@ -61,15 +62,8 @@ expressRoot.get('/', (req, res) => {
         <link rel="stylesheet" href="/style.css" />
       </head>
       <body>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/api-data">API Data</a>
-          <a href="/healthz">Health</a>
-        </nav>
         <h1>Welcome to Express + Bun ${process.versions.bun} on Vercel 🚀</h1>
-        <p>This is a minimal example without a database or forms.</p>
-        <img src="/logo.png" alt="Logo" width="120" />
+        backend version : ${AppVersion}
       </body>
     </html>
   `)
