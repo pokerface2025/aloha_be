@@ -49,7 +49,7 @@ export class OrdersManager {
 
     static async getOrdersList(query: any) {
 
-        if (query._id){
+        if (query && query["_id"]) {
             query._id = new ObjectId(query._id);
         }
 
@@ -61,7 +61,7 @@ export class OrdersManager {
 
     static async updateOrder(data: any) {
 
-        if (data._id){
+        if (data["_id"]) {
             data._id = new ObjectId(data._id);
         }
 

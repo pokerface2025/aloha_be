@@ -20,15 +20,18 @@ const expressRoot = express()
 
 expressRoot.use(express.json({ limit: '50mb' })); // Increase the limit to 50mb for large JSON payloads
 expressRoot.use(express.urlencoded({ extended: true }));
-expressRoot.use(morgan("dev"));
+
+if (Env.RUNAS == "dev") {
+  expressRoot.use(morgan("dev"));
+}
 
 expressRoot.use(cors({
-    origin: "*", // Allow all origins
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
-    allowedHeaders: "*", // Allow specific headers
-    preflightContinue: false, // Do not pass the preflight request to the next handler
-    optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
-  }));
+  origin: "*", // Allow all origins
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
+  allowedHeaders: "*", // Allow specific headers
+  preflightContinue: false, // Do not pass the preflight request to the next handler
+  optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
+}));
 
 expressRoot.use((req, res, next) => {
   const reqData = {
@@ -40,7 +43,7 @@ expressRoot.use((req, res, next) => {
     status: res.statusCode,
     ip: req.ip
   }
-  
+
 
   if (logType["express"]) {
     console.log("🔷", reqData);
