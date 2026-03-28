@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { Env, environmentSetup, logType } from './envSetup.js';
 import expressRoutes from './express/expressRoutes.js';
 import { DatabaseManager } from './database/databaseManager.js';
+import { AppVersion } from './version.js';
 
 environmentSetup()
 await DatabaseManager.init(Env.MONGOURI, Env.MONGODB)
@@ -19,15 +20,18 @@ const expressRoot = express()
 
 expressRoot.use(express.json({ limit: '50mb' })); // Increase the limit to 50mb for large JSON payloads
 expressRoot.use(express.urlencoded({ extended: true }));
-expressRoot.use(morgan("dev"));
+
+if (Env.RUNAS == "dev") {
+  expressRoot.use(morgan("dev"));
+}
 
 expressRoot.use(cors({
-    origin: "*", // Allow all origins
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
-    allowedHeaders: "*", // Allow specific headers
-    preflightContinue: false, // Do not pass the preflight request to the next handler
-    optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
-  }));
+  origin: "*", // Allow all origins
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow specific HTTP methods
+  allowedHeaders: "*", // Allow specific headers
+  preflightContinue: false, // Do not pass the preflight request to the next handler
+  optionsSuccessStatus: 204 // Respond with 204 for successful preflight requests
+}));
 
 expressRoot.use((req, res, next) => {
   const reqData = {
@@ -39,7 +43,7 @@ expressRoot.use((req, res, next) => {
     status: res.statusCode,
     ip: req.ip
   }
-  
+
 
   if (logType["express"]) {
     console.log("🔷", reqData);
@@ -61,15 +65,8 @@ expressRoot.get('/', (req, res) => {
         <link rel="stylesheet" href="/style.css" />
       </head>
       <body>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/api-data">API Data</a>
-          <a href="/healthz">Health</a>
-        </nav>
         <h1>Welcome to Express + Bun ${process.versions.bun} on Vercel 🚀</h1>
-        <p>This is a minimal example without a database or forms.</p>
-        <img src="/logo.png" alt="Logo" width="120" />
+        backend version : ${AppVersion}
       </body>
     </html>
   `)

@@ -49,11 +49,11 @@ export class OrdersManager {
 
     static async getOrdersList(query: any) {
 
-        if (query._id){
+        if (query && query["_id"]) {
             query._id = new ObjectId(query._id);
         }
 
-        const result = await getCollection("orders").find(query).toArray();
+        const result = await getCollection("orders").find(query).sort({ createdAt: -1 }).toArray();
 
         return result;
 
@@ -61,7 +61,7 @@ export class OrdersManager {
 
     static async updateOrder(data: any) {
 
-        if (data._id){
+        if (data["_id"]) {
             data._id = new ObjectId(data._id);
         }
 

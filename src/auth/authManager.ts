@@ -21,7 +21,7 @@ export class AuthManager {
         const userFind: any[] = await UserManager.getUserByUsername(username);
         const userData: UserStruct = userFind[0];
         if (!userData) {
-            throw new AppError(alertList.userNotFound);
+            throw new AppError(alertList.userOrPasswordError);
         }
         // Check if the password is empty
         if (!data.password) {
